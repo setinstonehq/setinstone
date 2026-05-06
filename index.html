@@ -2,41 +2,159 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+
+<!-- ВАЖНО: мобильная адаптация -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
 <title>Тест на принятие решений</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
  font-family: Inter, Arial, sans-serif;
  background: linear-gradient(180deg,#2a1608,#1a0d04);
- color:#f8fafc; margin:0; min-height:100vh;
+ color:#f8fafc;
+ margin:0;
+ min-height:100vh;
+
+ /* улучшение на мобилке */
+ display:flex;
+ align-items:center;
+ justify-content:center;
 }
-.container { max-width:700px; margin:auto; padding:24px; }
-.card {
- background:#3a2412; padding:28px; border-radius:18px;
+
+/* контейнер */
+.container{
+ width:100%;
+ max-width:700px;
+ padding:24px;
+}
+
+/* карточка */
+.card{
+ background:#3a2412;
+ padding:28px;
+ border-radius:18px;
  box-shadow:0 12px 30px rgba(0,0,0,.28);
 }
-h2{margin-top:0;font-size:30px;line-height:1.25;margin-bottom:18px}
-p{font-size:18px;line-height:1.6}
-button {
- width:100%; padding:16px 18px; margin:12px 0; border:none;
- border-radius:12px; cursor:pointer; font-size:18px; font-weight:700;
- background:#f59e0b; color:#2b1400; transition:.2s;
+
+/* заголовок */
+h2{
+ margin-top:0;
+ font-size:30px;
+ line-height:1.25;
+ margin-bottom:18px;
 }
-button:hover{transform:translateY(-1px);filter:brightness(1.05)}
-.progress { height:10px; background:#5b3a1c; border-radius:999px; margin-bottom:20px; overflow:hidden}
-.bar { height:10px; background:linear-gradient(90deg,#f59e0b,#fb923c); border-radius:999px; width:0%; transition:width .25s}
-.small { opacity:0.9; font-size:16px; line-height:1.55; }
-.hidden { display:none; }
-hr{border:none;border-top:1px solid #8b5a2b;margin:18px 0}
+
+/* текст */
+p{
+ font-size:18px;
+ line-height:1.6;
+}
+
+/* кнопки */
+button{
+ width:100%;
+ padding:16px 18px;
+ margin:12px 0;
+ border:none;
+ border-radius:12px;
+ cursor:pointer;
+ font-size:18px;
+ font-weight:700;
+ background:#f59e0b;
+ color:#2b1400;
+ transition:.15s;
+
+ /* убираем задержку тапа */
+ touch-action:manipulation;
+}
+
+/* hover только для десктопа */
+@media (hover:hover){
+ button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+ }
+}
+
+/* активное нажатие */
+button:active{
+ transform:scale(0.98);
+}
+
+/* прогресс */
+.progress{
+ height:10px;
+ background:#5b3a1c;
+ border-radius:999px;
+ margin-bottom:20px;
+ overflow:hidden;
+}
+
+.bar{
+ height:10px;
+ background:linear-gradient(90deg,#f59e0b,#fb923c);
+ border-radius:999px;
+ width:0%;
+ transition:width .25s;
+}
+
+/* мелкий текст */
+.small{
+ opacity:0.9;
+ font-size:16px;
+ line-height:1.55;
+}
+
+.hidden{
+ display:none;
+}
+
+hr{
+ border:none;
+ border-top:1px solid #8b5a2b;
+ margin:18px 0;
+}
+
+/* 📱 МОБИЛКА */
 @media(max-width:600px){
- .container{padding:14px}
- .card{padding:20px}
- h2{font-size:24px}
- button{font-size:17px;padding:15px}
- p{font-size:17px}
+
+ body{
+  align-items:flex-start;
+ }
+
+ .container{
+  padding:12px;
+ }
+
+ .card{
+  padding:18px;
+  border-radius:16px;
+ }
+
+ h2{
+  font-size:22px;
+ }
+
+ p{
+  font-size:16px;
+ }
+
+ button{
+  font-size:16px;
+  padding:14px;
+  margin:10px 0;
+ }
+
+ .progress{
+  margin-bottom:14px;
+ }
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -49,18 +167,76 @@ hr{border:none;border-top:1px solid #8b5a2b;margin:18px 0}
 const names={p:"Защитник",s:"Выживший",a:"Принципиальный",n:"Навигатор",o:"Наблюдатель"};
 const desc={p:"Ты вмешиваешься, когда ситуация становится личной. Не игнорируешь людей, когда от тебя что-то зависит.",s:"Ты выбираешь решения, которые работают. Даже если они не идеальны.",a:"Ты держишься принципов. Даже когда это неудобно или невыгодно.",n:"Ты читаешь людей и подстраиваешься. Предпочитаешь управлять ситуацией, а не ломать её.",o:"Ты не спешишь действовать. Сначала смотришь, потом решаешь, стоит ли вообще вмешиваться."};
 const endings={p:"Ты не проходишь мимо, когда кто-то рядом теряет контроль.",s:"Ты не ищешь идеальный вариант — ты выбираешь рабочий.",a:"Ты скорее потеряешь выгоду, чем предашь свои принципы.",n:"Ты не давишь — ты направляешь.",o:"Ты не в центре событий, но ты видишь больше, чем другие."};
-let questions=[{q:"Вы убегаете от опасности. Один человек замедляет всех.",a:[["Помочь, даже если это риск для группы",{p:2,a:1}],["Помочь немного и идти дальше",{p:1,n:2,s:1}],["Оставить его ради выживания",{s:2,o:1}]]},{q:"Ты замечаешь, что кто-то тайно берёт себе больше еды.",a:[["Разоблачить при всех",{a:2}],["Поговорить наедине",{n:2}],["Проигнорировать",{o:2}]]},{q:"Начальник даёт задание, которое кажется неправильным.",a:[["Выполнить",{o:2}],["Задать вопросы",{n:2}],["Отказаться",{a:2}]]},{q:"Вы с коллегой сделали одинаковую работу, но всю заслугу дают тебе.",a:[["Разделить",{a:2}],["Принять",{s:2}],["Сказать только если спросят",{n:2}]]},{q:"Ты находишь способ обойти правила и сэкономить время.",a:[["Использовать постоянно",{s:2}],["Иногда пользоваться",{n:2}],["Не использовать",{a:2}]]},{q:"Клиент злится из-за ошибки.",a:[["Признать вину",{a:2}],["Свалить на систему / ресторан",{s:2}],["Ответить размыто",{n:2}]]},{q:"Тебе нужно выбрать:",a:[["Срочное, но мелкое дело",{s:2}],["Важное, но долгосрочное",{a:2}]]},{q:"Есть проблема, но никто не хочет её решать.",a:[["Взять на себя",{p:2}],["Предложить кому-то другому",{n:2}],["Проигнорировать",{o:2}]]},{q:"Друзья выбирают место, которое тебе не по карману.",a:[["Сказать честно",{a:2}],["Всё равно пойти",{s:2}],["Предложить альтернативу",{n:2}]]},{q:"В компании кого-то игнорируют.",a:[["Включить его в разговор",{p:2}],["Ничего не делать",{o:2}],["Оставить это группе",{n:2}]]},{q:"Друг совершает ошибку, которая может повлиять на других.",a:[["Прикрыть его",{p:2}],["Убедить признаться",{a:2}],["Сообщить",{s:2}]]},{q:"Ты видишь, как человек уронил деньги.",a:[["Вернуть",{a:2}],["Оставить себе",{s:2}],["Замешкаться / подождать",{o:2}]]}];
+
+let questions=[
+{q:"Вы убегаете от опасности. Один человек замедляет всех.",a:[["Помочь, даже если это риск для группы",{p:2,a:1}],["Помочь немного и идти дальше",{p:1,n:2,s:1}],["Оставить его ради выживания",{s:2,o:1}]]},
+{q:"Ты замечаешь, что кто-то тайно берёт себе больше еды.",a:[["Разоблачить при всех",{a:2}],["Поговорить наедине",{n:2}],["Проигнорировать",{o:2}]]},
+{q:"Начальник даёт задание, которое кажется неправильным.",a:[["Выполнить",{o:2}],["Задать вопросы",{n:2}],["Отказаться",{a:2}]]},
+{q:"Вы с коллегой сделали одинаковую работу, но всю заслугу дают тебе.",a:[["Разделить",{a:2}],["Принять",{s:2}],["Сказать только если спросят",{n:2}]]},
+{q:"Ты находишь способ обойти правила и сэкономить время.",a:[["Использовать постоянно",{s:2}],["Иногда пользоваться",{n:2}],["Не использовать",{a:2}]]},
+{q:"Клиент злится из-за ошибки.",a:[["Признать вину",{a:2}],["Свалить на систему / ресторан",{s:2}],["Ответить размыто",{n:2}]]},
+{q:"Тебе нужно выбрать:",a:[["Срочное, но мелкое дело",{s:2}],["Важное, но долгосрочное",{a:2}]]},
+{q:"Есть проблема, но никто не хочет её решать.",a:[["Взять на себя",{p:2}],["Предложить кому-то другому",{n:2}],["Проигнорировать",{o:2}]]},
+{q:"Друзья выбирают место, которое тебе не по карману.",a:[["Сказать честно",{a:2}],["Всё равно пойти",{s:2}],["Предложить альтернативу",{n:2}]]},
+{q:"В компании кого-то игнорируют.",a:[["Включить его в разговор",{p:2}],["Ничего не делать",{o:2}],["Оставить это группе",{n:2}]]},
+{q:"Друг совершает ошибку, которая может повлиять на других.",a:[["Прикрыть его",{p:2}],["Убедить признаться",{a:2}],["Сообщить",{s:2}]]},
+{q:"Ты видишь, как человек уронил деньги.",a:[["Вернуть",{a:2}],["Оставить себе",{s:2}],["Замешкаться / подождать",{o:2}]]}
+];
+
 function shuffle(arr){
 for(let j=arr.length-1;j>0;j--){
  const k=Math.floor(Math.random()*(j+1));
  [arr[j],arr[k]]=[arr[k],arr[j]];
 }
 }
+
 shuffle(questions);
+
 let i=0,score={p:0,s:0,a:0,n:0,o:0};
-function render(){let q=questions[i],html="<h2>"+q.q+"</h2>";q.a.forEach((ans,idx)=>html+=`<button onclick="choose(${idx})">${ans[0]}</button>`);document.getElementById("card").innerHTML=html;document.getElementById("bar").style.width=((i/questions.length)*100)+"%";}
-function choose(idx){let data=questions[i].a[idx][1];for(let k in data){score[k]+=data[k];}i++;i<questions.length?render():showResult();}
-function showResult(){let arr=Object.entries(score),total=arr.reduce((s,x)=>s+x[1],0);arr.sort((a,b)=>b[1]-a[1]);let main=arr[0][0],second=arr[1][0],shadow=arr[arr.length-1][0];const percent=v=>total?Math.round(v/total*100):0;document.getElementById("card").classList.add("hidden");let res=document.getElementById("result");res.classList.remove("hidden");res.innerHTML=`<h2>Твой результат</h2><p><b>Основной тип: ${names[main]}</b> (${percent(arr[0][1])}%)</p><p>${desc[main]}</p><hr><p><b>Вторичный: ${names[second]}</b></p><p class="small">${desc[second]}</p><hr><p><b>Теневая сторона: ${names[shadow]}</b></p><p class="small">${desc[shadow]}</p><hr><p><i>${endings[main]}</i></p><button onclick="location.reload()">Пройти заново</button>`;}
+
+function render(){
+ let q=questions[i];
+ let html="<h2>"+q.q+"</h2>";
+ q.a.forEach((ans,idx)=>html+=`<button onclick="choose(${idx})">${ans[0]}</button>`);
+ document.getElementById("card").innerHTML=html;
+ document.getElementById("bar").style.width=((i/questions.length)*100)+"%";
+}
+
+function choose(idx){
+ let data=questions[i].a[idx][1];
+ for(let k in data){score[k]+=data[k];}
+ i++;
+ i<questions.length?render():showResult();
+}
+
+function showResult(){
+ let arr=Object.entries(score),total=arr.reduce((s,x)=>s+x[1],0);
+ arr.sort((a,b)=>b[1]-a[1]);
+ let main=arr[0][0],second=arr[1][0],shadow=arr[arr.length-1][0];
+ const percent=v=>total?Math.round(v/total*100):0;
+
+ document.getElementById("card").classList.add("hidden");
+ let res=document.getElementById("result");
+ res.classList.remove("hidden");
+
+ res.innerHTML=`
+ <h2>Твой результат</h2>
+ <p><b>Основной тип: ${names[main]}</b> (${percent(arr[0][1])}%)</p>
+ <p>${desc[main]}</p>
+ <hr>
+ <p><b>Вторичный: ${names[second]}</b></p>
+ <p class="small">${desc[second]}</p>
+ <hr>
+ <p><b>Теневая сторона: ${names[shadow]}</b></p>
+ <p class="small">${desc[shadow]}</p>
+ <hr>
+ <p><i>${endings[main]}</i></p>
+ <button onclick="location.reload()">Пройти заново</button>
+ `;
+}
+
 render();
 </script>
-</body></html>
+
+</body>
+</html>
